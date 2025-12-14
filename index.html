@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Калькулятор оценок</title>
+
+    <!-- Telegram Web App API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+        }
+        input, button {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Калькулятор оценок</h2>
+
+<button onclick="showExam()">Минимальный балл за экзамен</button>
+<button onclick="showRK()">Баллы РК для рейтинга</button>
+
+<div id="content"></div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // раскрыть мини-приложение
+
+    function showExam() {
+        document.getElementById("content").innerHTML = `
+            <input type="number" id="rating" placeholder="Рейтинг допуска">
+            <input type="number" id="result" placeholder="Желаемый итоговый балл">
+            <button onclick="minExam()">Посчитать</button>
+            <div class="result" id="output"></div>
+        `;
+    }
+
+    function showRK() {
+        document.getElementById("content").innerHTML = `
+            <input type="number" id="tk" placeholder="Баллы ТК">
+            <input type="number" id="rating" placeholder="Желаемый рейтинг">
+            <button onclick="minRK()">Посчитать</button>
+            <div class="result" id="output"></div>
+        `;
+    }
+
+    function minExam() {
+        const rating = Number(document.getElementById("rating").value);
+        const result = Number(document.getElementById("result").value);
+
+        const exam = Math.ceil((result - (rating * 0.6)) / 0.4);
+
+        let text;
+        if (exam < 50 || exam > 100) {
+            text = "Вам никак не набрать столько итоговых баллов.";
+        } else {
+            text = `Вам нужно набрать ${exam} баллов на экзамене.`;
+        }
+
+        document.getElementById("output").innerText = text;
+    }
+
+    function minRK() {
+        const tk = Number(document.getElementById("tk").value);
+        const rating = Number(document.getElementById("rating").value);
+
+        const rk = (rating * 2) - tk;
+
+        let text;
+        if (rk > 100) {
+            text = "Вам никак не набрать столько баллов на РК.";
+        } else {
+            text = `Вам нужно набрать ${rk} баллов на РК.`;
+        }
+
+        document.getElementById("output").innerText = text;
+    }
+</script>
+
+</body>
+</html>
