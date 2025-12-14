@@ -4,23 +4,85 @@
     <meta charset="UTF-8">
     <title>Калькулятор оценок</title>
 
-    <!-- Telegram Web App API -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
+        :root {
+            --bg: #ffffff;
+            --card: #f2f2f2;
+            --text: #000000;
+            --accent: #3390ec;
+            --input-bg: #ffffff;
+        }
+
+        body.dark {
+            --bg: #0f0f0f;
+            --card: #1c1c1e;
+            --text: #ffffff;
+            --accent: #3fa9ff;
+            --input-bg: #2c2c2e;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            margin: 0;
             padding: 16px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
         }
-        input, button {
+
+        h2 {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn {
             width: 100%;
-            padding: 8px;
-            margin: 6px 0;
+            padding: 14px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 12px;
             font-size: 16px;
+            font-weight: 600;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+            transition: transform 0.1s ease, opacity 0.1s ease;
         }
+
+        .btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .input {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border-radius: 12px;
+            border: none;
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .input::placeholder {
+            color: #888;
+        }
+
         .result {
             margin-top: 12px;
-            font-weight: bold;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
         }
     </style>
 </head>
@@ -28,29 +90,36 @@
 
 <h2>Калькулятор оценок</h2>
 
-<button onclick="showExam()">Минимальный балл за экзамен</button>
-<button onclick="showRK()">Баллы РК для рейтинга</button>
+<div class="card">
+    <button class="btn" onclick="showExam()">Минимальный балл за экзамен</button>
+    <button class="btn" onclick="showRK()">Баллы РК для рейтинга</button>
 
-<div id="content"></div>
+    <div id="content"></div>
+</div>
 
 <script>
     const tg = window.Telegram.WebApp;
-    tg.expand(); // раскрыть мини-приложение
+    tg.expand();
+
+    // Авто-тема Telegram
+    if (tg.colorScheme === "dark") {
+        document.body.classList.add("dark");
+    }
 
     function showExam() {
         document.getElementById("content").innerHTML = `
-            <input type="number" id="rating" placeholder="Рейтинг допуска">
-            <input type="number" id="result" placeholder="Желаемый итоговый балл">
-            <button onclick="minExam()">Посчитать</button>
+            <input class="input" type="number" id="rating" placeholder="Рейтинг допуска">
+            <input class="input" type="number" id="result" placeholder="Желаемый итоговый балл">
+            <button class="btn" onclick="minExam()">Посчитать</button>
             <div class="result" id="output"></div>
         `;
     }
 
     function showRK() {
         document.getElementById("content").innerHTML = `
-            <input type="number" id="tk" placeholder="Баллы ТК">
-            <input type="number" id="rating" placeholder="Желаемый рейтинг">
-            <button onclick="minRK()">Посчитать</button>
+            <input class="input" type="number" id="tk" placeholder="Баллы ТК">
+            <input class="input" type="number" id="rating" placeholder="Желаемый рейтинг">
+            <button class="btn" onclick="minRK()">Посчитать</button>
             <div class="result" id="output"></div>
         `;
     }
@@ -61,14 +130,10 @@
 
         const exam = Math.ceil((result - (rating * 0.6)) / 0.4);
 
-        let text;
-        if (exam < 50 || exam > 100) {
-            text = "Вам никак не набрать столько итоговых баллов.";
-        } else {
-            text = `Вам нужно набрать ${exam} баллов на экзамене.`;
-        }
-
-        document.getElementById("output").innerText = text;
+        document.getElementById("output").innerText =
+            (exam < 50 || exam > 100)
+            ? "Вам никак не набрать столько итоговых баллов."
+            : `Нужно набрать ${exam} баллов на экзамене.`;
     }
 
     function minRK() {
@@ -77,14 +142,10 @@
 
         const rk = (rating * 2) - tk;
 
-        let text;
-        if (rk > 100) {
-            text = "Вам никак не набрать столько баллов на РК.";
-        } else {
-            text = `Вам нужно набрать ${rk} баллов на РК.`;
-        }
-
-        document.getElementById("output").innerText = text;
+        document.getElementById("output").innerText =
+            (rk > 100)
+            ? "Вам никак не набрать столько баллов на РК."
+            : `Нужно набрать ${rk} баллов на РК.`;
     }
 </script>
 
