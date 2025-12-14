@@ -2,89 +2,17 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+
+    <!-- ВАЖНО для iOS: отключаем зум -->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
     <title>Калькулятор оценок</title>
 
+    <!-- Telegram WebApp -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <style>
-        :root {
-            --bg: #ffffff;
-            --card: #f2f2f2;
-            --text: #000000;
-            --accent: #3390ec;
-            --input-bg: #ffffff;
-        }
-
-        body.dark {
-            --bg: #0f0f0f;
-            --card: #1c1c1e;
-            --text: #ffffff;
-            --accent: #3fa9ff;
-            --input-bg: #2c2c2e;
-        }
-
-        body {
-            margin: 0;
-            padding: 16px;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 16px;
-        }
-
-        .card {
-            background: var(--card);
-            padding: 16px;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            margin: 8px 0;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            background: var(--accent);
-            color: white;
-            cursor: pointer;
-            transition: transform 0.1s ease, opacity 0.1s ease;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-
-        .input {
-            width: 100%;
-            padding: 14px;
-            margin: 8px 0;
-            border-radius: 12px;
-            border: none;
-            background: var(--input-bg);
-            color: var(--text);
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-        .input::placeholder {
-            color: #888;
-        }
-
-        .result {
-            margin-top: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -97,57 +25,6 @@
     <div id="content"></div>
 </div>
 
-<script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-
-    // Авто-тема Telegram
-    if (tg.colorScheme === "dark") {
-        document.body.classList.add("dark");
-    }
-
-    function showExam() {
-        document.getElementById("content").innerHTML = `
-            <input class="input" type="number" id="rating" placeholder="Рейтинг допуска">
-            <input class="input" type="number" id="result" placeholder="Желаемый итоговый балл">
-            <button class="btn" onclick="minExam()">Посчитать</button>
-            <div class="result" id="output"></div>
-        `;
-    }
-
-    function showRK() {
-        document.getElementById("content").innerHTML = `
-            <input class="input" type="number" id="tk" placeholder="Баллы ТК">
-            <input class="input" type="number" id="rating" placeholder="Желаемый рейтинг">
-            <button class="btn" onclick="minRK()">Посчитать</button>
-            <div class="result" id="output"></div>
-        `;
-    }
-
-    function minExam() {
-        const rating = Number(document.getElementById("rating").value);
-        const result = Number(document.getElementById("result").value);
-
-        const exam = Math.ceil((result - (rating * 0.6)) / 0.4);
-
-        document.getElementById("output").innerText =
-            (exam < 50 || exam > 100)
-            ? "Вам никак не набрать столько итоговых баллов."
-            : `Нужно набрать ${exam} баллов на экзамене.`;
-    }
-
-    function minRK() {
-        const tk = Number(document.getElementById("tk").value);
-        const rating = Number(document.getElementById("rating").value);
-
-        const rk = (rating * 2) - tk;
-
-        document.getElementById("output").innerText =
-            (rk > 100)
-            ? "Вам никак не набрать столько баллов на РК."
-            : `Нужно набрать ${rk} баллов на РК.`;
-    }
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>
